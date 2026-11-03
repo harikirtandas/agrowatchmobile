@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- web/img/logo-aw.svg pasado a Vector Drawable. Un vector no admite texto, así que
+     las letras "AW" están dibujadas como trazos. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:fillColor="@color/amarillo_logo"
+        android:pathData="M50,0a50,50 0,1 1,0 100a50,50 0,1 1,0 -100z" />
+    <path
+        android:pathData="M50,13a37,37 0,1 1,0 74a37,37 0,1 1,0 -74z"
+        android:strokeWidth="6"
+        android:strokeColor="@color/verde_oscuro" />
+    <path
+        android:pathData="M26,63L36,39L46,63M30.2,55L41.8,55M48,39L53.5,63L61,44L68.5,63L74,39"
+        android:strokeWidth="6.5"
+        android:strokeColor="@color/verde_oscuro"
+        android:strokeLineJoin="miter" />
+</vector>

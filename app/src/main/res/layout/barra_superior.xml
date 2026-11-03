@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Barra superior de todas las pantallas, como .barra-superior de la web: verde oscuro,
+     logo redondo y nombre. Pantalla.prepararBarras() la estira bajo la barra de estado. -->
+<com.google.android.material.appbar.MaterialToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/barraSuperior"
+    style="@style/BarraSuperior"
+    android:minHeight="?attr/actionBarSize"
+    app:contentInsetStartWithNavigation="0dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:contentDescription="@string/descripcion_logo"
+            android:src="@drawable/logo_aw" />
+
+        <TextView
+            android:id="@+id/tvTituloBarra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/app_name"
+            android:textColor="@color/blanco"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</com.google.android.material.appbar.MaterialToolbar>

@@ -1,9 +1,54 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.AgroWatchMobile" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<resources>
+    <!-- Tema claro solamente: la web no tiene modo oscuro y la app la acompaña. -->
+    <style name="Base.Theme.AgroWatchMobile" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/verde_medio</item>
+        <item name="colorOnPrimary">@color/blanco</item>
+        <item name="colorPrimaryContainer">@color/verde_claro</item>
+        <item name="colorOnPrimaryContainer">@color/verde_oscuro</item>
+        <item name="colorSecondary">@color/amarillo_logo</item>
+        <item name="colorOnSecondary">@color/verde_oscuro</item>
+        <item name="colorError">@color/rojo_texto</item>
+        <item name="android:colorBackground">@color/fondo_app</item>
+        <item name="colorSurface">@color/blanco</item>
+        <item name="colorOnSurface">@color/negro_texto</item>
+        <item name="colorOnSurfaceVariant">@color/gris_texto</item>
+        <item name="colorOutline">@color/gris_borde</item>
+        <item name="android:windowBackground">@color/fondo_app</item>
     </style>
 
     <style name="Theme.AgroWatchMobile" parent="Base.Theme.AgroWatchMobile" />
+
+    <!-- Barra superior verde oscura con el logo, como .barra-superior de comun.css. -->
+    <style name="BarraSuperior">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/verde_oscuro</item>
+        <item name="android:theme">@style/ThemeOverlay.Material3.Dark.ActionBar</item>
+    </style>
+
+    <!-- Tarjeta blanca con borde, radio 16 como la variable radio de la web. -->
+    <style name="Tarjeta" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardBackgroundColor">@color/blanco</item>
+        <item name="strokeColor">@color/gris_borde</item>
+    </style>
+
+    <style name="Texto.Titulo" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">@color/negro_texto</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Texto.Etiqueta" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textColor">@color/gris_texto</item>
+    </style>
+
+    <style name="Texto.Valor" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textColor">@color/negro_texto</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Boton" parent="Widget.Material3.Button">
+        <item name="android:minHeight">52dp</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
 </resources>
