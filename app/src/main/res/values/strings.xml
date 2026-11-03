@@ -1,3 +1,120 @@
 <resources>
-    <string name="app_name">AgroWatchMobile</string>
+    <string name="app_name">AgroWatch</string>
+    <string name="url_web" translatable="false">https://agrowatchout.up.railway.app/html/creacion_de_usuario_parte_1.html</string>
+
+    <!-- Comunes -->
+    <string name="cargando">Cargando…</string>
+    <string name="sin_dato">-</string>
+    <string name="error_sin_conexion">Sin conexión con la API. Revisá tu conexión e intentá de nuevo.</string>
+    <string name="error_sin_detalle">La API respondió un error sin detalle.</string>
+    <string name="error_codigo">Error %1$d: %2$s</string>
+    <string name="sesion_vencida">Tu sesión venció. Ingresá de nuevo.</string>
+    <string name="accion_actualizar">Actualizar</string>
+    <string name="accion_salir">Salir</string>
+    <string name="descripcion_logo">Logo de AgroWatch</string>
+    <string name="reintentar">Reintentar</string>
+
+    <!-- Login -->
+    <string name="login_titulo">Ingresá a tu campo</string>
+    <string name="login_subtitulo">Mirá el semáforo de tus lotes y cargá costos desde el lote.</string>
+    <string name="login_email">Email</string>
+    <string name="login_password">Contraseña</string>
+    <string name="login_ingresar">Ingresar</string>
+    <string name="login_ingresando">Ingresando…</string>
+    <string name="login_registro">¿No tenés cuenta? Registrate en la web</string>
+    <string name="login_error_email">Ingresá un email válido.</string>
+    <string name="login_error_password">Ingresá tu contraseña.</string>
+
+    <!-- Panel -->
+    <string name="panel_campo">Campo</string>
+    <string name="panel_semaforo_titulo">Semáforo del campo</string>
+    <string name="panel_campania">Campaña %1$s</string>
+    <string name="panel_sin_campania">No hay una campaña abierta. Creala desde la web.</string>
+    <string name="panel_sin_campos">Todavía no tenés ningún campo cargado. Cargalo desde la web.</string>
+    <string name="panel_sin_lotes">Este campo no tiene lotes. Cargalos desde la web.</string>
+    <string name="panel_sembradas">Sembradas</string>
+    <string name="panel_sembradas_total">de %1$s ha</string>
+    <string name="panel_margen_bruto">Margen bruto</string>
+    <string name="panel_margen_ha">%1$s por ha</string>
+    <string name="panel_en_alerta">En alerta</string>
+    <string name="panel_en_alerta_valor">%1$d de %2$d</string>
+    <string name="panel_lotes_titulo">Lotes</string>
+    <string name="panel_lote_sin_siembra">Este lote no tiene siembra en la campaña. Cargala desde la web.</string>
+    <string name="frase_sin_datos">Todavía no hay margen calculado para mostrar un porcentaje.</string>
+    <string name="frase_margen">De cada 100 US$ que entran, %1$d quedan de margen.</string>
+    <string name="frase_perdida">El campo está perdiendo plata: el costo supera al ingreso.</string>
+    <string name="unidad_ha">%1$s ha</string>
+
+    <!-- Fila de lote -->
+    <string name="lote_sin_siembra">Sin siembra en la campaña</string>
+    <string name="lote_cultivo_ha">%1$s · %2$s ha</string>
+    <string name="lote_margen_ha">%1$s/ha</string>
+
+    <!-- Estados del semáforo: los mismos textos que la web -->
+    <string name="estado_verde">Bien</string>
+    <string name="estado_amarillo">Ajustado</string>
+    <string name="estado_rojo">Alerta</string>
+    <string name="estado_sin_datos">Sin datos</string>
+
+    <!-- Detalle de lote -->
+    <string name="lote_titulo">%1$s · %2$s</string>
+    <string name="lote_subtitulo">Campaña %1$s · %2$s ha sembradas</string>
+    <string name="lote_rentabilidad">Rentabilidad proyectada</string>
+    <string name="lote_rinde_indiferencia">Rinde de indiferencia</string>
+    <string name="lote_qq_ha">%1$s qq/ha</string>
+    <string name="lote_numeros">Números de la proyección</string>
+    <string name="lote_ingreso">Ingreso esperado</string>
+    <string name="lote_costo_total">Costo total</string>
+    <string name="lote_costo_ha">Costo por hectárea</string>
+    <string name="lote_margen">Margen bruto</string>
+    <string name="lote_falta_dato">%1$s Completalo desde la web.</string>
+    <string name="lote_cargar_costo">Cargar costo</string>
+    <string name="lote_costos_titulo">Costos cargados</string>
+    <string name="lote_sin_costos">Todavía no hay costos cargados en este lote.</string>
+    <string name="lote_costo_guardado">Costo guardado</string>
+    <string name="importe_usd">US$ %1$s</string>
+    <string name="importe_ars">$ %1$s</string>
+    <string name="porcentaje">%1$s%%</string>
+    <string name="costo_detalle">%1$s · %2$s %3$s · %4$s</string>
+
+    <!-- Nuevo costo -->
+    <string name="costo_titulo">Nuevo costo</string>
+    <string name="costo_categoria">Categoría</string>
+    <string name="costo_descripcion">Descripción</string>
+    <string name="costo_descripcion_hint">Ej.: Glifosato 66%</string>
+    <string name="costo_cantidad">Cantidad</string>
+    <string name="costo_unidad">Unidad</string>
+    <string name="costo_unidad_hint">lt, kg, ha…</string>
+    <string name="costo_precio">Precio unitario</string>
+    <string name="costo_moneda">Moneda</string>
+    <string name="costo_fecha">Fecha</string>
+    <string name="costo_guardar">Guardar costo</string>
+    <string name="costo_guardando">Guardando…</string>
+    <string name="costo_error_requerido">Requerido.</string>
+    <string name="costo_error_cantidad">Tiene que ser mayor que cero.</string>
+    <string name="costo_error_precio">No puede ser negativo.</string>
+    <string name="costo_error_largo">Máximo %1$d caracteres.</string>
+    <string name="costo_error_revisar">Revisá los campos marcados.</string>
+    <string name="moneda_ars" translatable="false">ARS</string>
+    <string name="moneda_usd" translatable="false">USD</string>
+
+    <!-- Las categorías: los valores son los del enum de costos.json en la API. -->
+    <string-array name="categorias_etiquetas">
+        <item>Semilla</item>
+        <item>Fertilizante</item>
+        <item>Herbicida</item>
+        <item>Maquinaria</item>
+        <item>Labor</item>
+        <item>Flete</item>
+        <item>Otro</item>
+    </string-array>
+    <string-array name="categorias_valores" translatable="false">
+        <item>semilla</item>
+        <item>fertilizante</item>
+        <item>herbicida</item>
+        <item>maquinaria</item>
+        <item>labor</item>
+        <item>flete</item>
+        <item>otro</item>
+    </string-array>
 </resources>

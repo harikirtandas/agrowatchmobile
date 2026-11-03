@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".panel.PanelActivity">
+
+    <include layout="@layout/barra_superior" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- El velocímetro y los indicadores van como encabezado de la lista
+             (panel_encabezado.xml): así todo se desplaza junto, sin una lista dentro de un ScrollView. -->
+        <ListView
+            android:id="@+id/lvLotes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:divider="@null"
+            android:paddingBottom="16dp" />
+
+        <include layout="@layout/aviso" />
+    </FrameLayout>
+</LinearLayout>
