@@ -6,7 +6,8 @@
     android:id="@+id/barraSuperior"
     style="@style/BarraSuperior"
     android:minHeight="?attr/actionBarSize"
-    app:contentInsetStartWithNavigation="0dp">
+    app:contentInsetStartWithNavigation="0dp"
+    app:popupTheme="@style/ThemeOverlay.Material3.Light">
 
     <LinearLayout
         android:layout_width="wrap_content"

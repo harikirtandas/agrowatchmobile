@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -115,9 +116,12 @@
                 <TextView
                     android:id="@+id/tvSembradas"
                     style="@style/Texto.Valor"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp" />
+                    android:maxLines="1"
+                    app:autoSizeMaxTextSize="18sp"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeTextType="uniform" />
 
                 <TextView
                     android:id="@+id/tvSembradasTotal"
@@ -150,9 +154,12 @@
                 <TextView
                     android:id="@+id/tvMargenBruto"
                     style="@style/Texto.Valor"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp" />
+                    android:maxLines="1"
+                    app:autoSizeMaxTextSize="18sp"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeTextType="uniform" />
 
                 <TextView
                     android:id="@+id/tvMargenHa"
@@ -185,10 +192,12 @@
                 <TextView
                     android:id="@+id/tvAlerta"
                     style="@style/Texto.Valor"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/rojo_texto"
-                    android:textSize="18sp" />
+                    android:maxLines="1"
+                    app:autoSizeMaxTextSize="18sp"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeTextType="uniform" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>

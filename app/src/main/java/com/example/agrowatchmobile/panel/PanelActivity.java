@@ -191,6 +191,9 @@ public class PanelActivity extends AppCompatActivity implements CargaPanel.Oyent
                 ? ""
                 : getString(R.string.panel_margen_ha, getString(R.string.importe_usd, Formato.numero(resumen.getMargenHaUsd(), 0))));
         tvAlerta.setText(getString(R.string.panel_en_alerta_valor, resumen.getLotesEnAlerta(), resumen.getLotes()));
+        // En rojo sólo si hay algún lote en alerta; "0 de 6" no es una alarma.
+        tvAlerta.setTextColor(ContextCompat.getColor(this,
+                resumen.getLotesEnAlerta() > 0 ? R.color.rojo_texto : R.color.negro_texto));
     }
 
     // La misma frase que fraseSemaforo() de la web.
