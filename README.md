@@ -179,5 +179,3 @@ en Android 7.0.
 - **Sin modo oscuro:** la web tampoco lo tiene.
 - **El ícono de la app es el del logo solo desde Android 8.0.** En 7.0 y 7.1 se ve el ícono por
   defecto de Android Studio.
-- **Después de un error, el aviso de un campo sigue visible** aunque ya se haya corregido, hasta
-  que se vuelve a tocar Guardar.

@@ -2,6 +2,8 @@ package com.example.agrowatchmobile.costo;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
@@ -82,6 +84,18 @@ public class NuevoCostoActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(NuevoCostoViewModel.class);
         viewModel.getEstado().observe(this, this::mostrarEstado);
+    }
+
+    //Los watches se registran aca y NO enonCreate: porque al girar la pantalla, Android devuelve el texto de cada campo con setText() entre onCreate y onPOstCreate.
+    //SI el watcher ya estuviera escuchando, ese setText borraria los errores auqneu el usuario no haya escrito nada(y al girar no perderian los avisos)
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        limpiarErrorAlEscribir(etDescripcion, tilDescripcion);
+        limpiarErrorAlEscribir(etCantidad, tilCantidad);
+        limpiarErrorAlEscribir(etUnidad, tilUnidad);
+        limpiarErrorAlEscribir(etPrecio, tilPrecio);
+        limpiarErrorAlEscribir(etFecha, tilFecha);
     }
 
     private void mostrarEstado(NuevoCostoViewModel.Estado estado) {
@@ -169,6 +183,15 @@ public class NuevoCostoActivity extends AppCompatActivity {
         if (valor.isEmpty()) return getString(R.string.costo_error_requerido);
         if (valor.length() > maximo) return getString(R.string.costo_error_largo, maximo);
         return null;
+    }
+
+    // Borra el aviso rojo del campo en cuanto el usuario escribe algo.
+    private void limpiarErrorAlEscribir(TextInputEditText campo, TextInputLayout til) {
+        campo.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int i, int a, int d) { }
+            @Override public void onTextChanged(CharSequence s, int i, int a, int d) { }
+            @Override public void afterTextChanged(Editable s) { til.setError(null); }
+        });
     }
 
     private Calendar fechaElegida() {
