@@ -86,8 +86,8 @@ public class NuevoCostoActivity extends AppCompatActivity {
         viewModel.getEstado().observe(this, this::mostrarEstado);
     }
 
-    //Los watches se registran aca y NO enonCreate: porque al girar la pantalla, Android devuelve el texto de cada campo con setText() entre onCreate y onPOstCreate.
-    //SI el watcher ya estuviera escuchando, ese setText borraria los errores auqneu el usuario no haya escrito nada(y al girar no perderian los avisos)
+    // Los watchers se registran acá y no en onCreate: al girar, Android restaura el texto de cada
+    // campo con setText() entre onCreate y onPostCreate, y eso borraría los avisos restaurados.
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
