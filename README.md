@@ -139,6 +139,9 @@ de siempre ya tomadas, para no repetirlas en cada pantalla:
 - `onFailure` significa que no hubo respuesta: se muestra «Sin conexión con la API».
 - `onResponse` con error muestra el `mensaje` de la API (400, 404, 422). En un 422 marca cada
   campo con lo que la API dice que está mal.
+- En Nuevo costo, el aviso de un campo se borra apenas se escribe en él. Cuando no queda
+  ningún aviso, también se oculta el mensaje de abajo. «Sin conexión con la API» no marca
+  campos, así que sigue visible hasta que se vuelve a tocar Guardar.
 - Un 401 cierra la sesión y vuelve al ingreso.
 - Si la Activity ya se cerró, por ejemplo porque se giró la pantalla, la respuesta se ignora.
 
@@ -153,6 +156,10 @@ tiene tests de unidad.
 es el criterio de la cursada. El alta del costo es la excepción: el `POST` vive en un
 `ViewModel`, que sobrevive al giro. Así el pedido en curso no se pierde y el botón sigue
 deshabilitado: no se puede mandar dos veces el mismo costo.
+
+Al girar, el formulario conserva lo escrito, los avisos de los campos y el mensaje de abajo. El
+error de la API se muestra una sola vez (después el `ViewModel` vuelve a `LIBRE`), así que un
+campo del 422 que el usuario ya corrigió no se vuelve a marcar al girar.
 
 **Identidad visual.**
 - La paleta de `colors.xml` usa los mismos nombres que las variables CSS de la web.
