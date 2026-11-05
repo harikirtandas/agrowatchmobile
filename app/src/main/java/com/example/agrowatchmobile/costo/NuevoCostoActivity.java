@@ -38,6 +38,8 @@ public class NuevoCostoActivity extends AppCompatActivity {
     private static final int MAX_DESCRIPCION = 120;
     private static final int MAX_UNIDAD = 10;
 
+    private static final String ESTADO_MENSAJE = "mensaje";
+
     private NuevoCostoViewModel viewModel;
     private int siembraId;
 
@@ -78,6 +80,13 @@ public class NuevoCostoActivity extends AppCompatActivity {
         // Sólo la primera vez: al girar, cada campo recupera solo lo que tenía escrito.
         if (savedInstanceState == null) {
             etFecha.setText(Formato.fechaPantalla(Calendar.getInstance()));
+        } else {
+            // El mensaje de abajo no se guarda solo como los avisos de los campos.
+            CharSequence mensaje = savedInstanceState.getCharSequence(ESTADO_MENSAJE);
+            if (mensaje != null) {
+                tvMensaje.setText(mensaje);
+                tvMensaje.setVisibility(View.VISIBLE);
+            }
         }
         etFecha.setOnClickListener(v -> elegirFecha());
         btnGuardar.setOnClickListener(v -> guardar());
@@ -98,6 +107,14 @@ public class NuevoCostoActivity extends AppCompatActivity {
         limpiarErrorAlEscribir(etFecha, tilFecha);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (tvMensaje.getVisibility() == View.VISIBLE) {
+            outState.putCharSequence(ESTADO_MENSAJE, tvMensaje.getText());
+        }
+    }
+
     private void mostrarEstado(NuevoCostoViewModel.Estado estado) {
         boolean guardando = estado == NuevoCostoViewModel.Estado.GUARDANDO;
         btnGuardar.setEnabled(!guardando);
@@ -108,6 +125,7 @@ public class NuevoCostoActivity extends AppCompatActivity {
             finish();
         } else if (estado == NuevoCostoViewModel.Estado.ERROR) {
             mostrarError(viewModel.getUltimoError());
+            viewModel.errorMostrado();
         } else if (guardando) {
             tvMensaje.setVisibility(View.GONE);
         }
@@ -166,8 +184,7 @@ public class NuevoCostoActivity extends AppCompatActivity {
                 : precio < 0 ? getString(R.string.costo_error_precio) : null);
         tilFecha.setError(fecha == null ? getString(R.string.costo_error_requerido) : null);
 
-        if (tilDescripcion.getError() != null || tilUnidad.getError() != null || tilCantidad.getError() != null
-                || tilPrecio.getError() != null || tilFecha.getError() != null) {
+        if (hayErrores()) {
             tvMensaje.setText(R.string.costo_error_revisar);
             tvMensaje.setVisibility(View.VISIBLE);
             return;
@@ -185,12 +202,25 @@ public class NuevoCostoActivity extends AppCompatActivity {
         return null;
     }
 
-    // Borra el aviso rojo del campo en cuanto el usuario escribe algo.
+    private boolean hayErrores() {
+        return tilDescripcion.getError() != null || tilUnidad.getError() != null || tilCantidad.getError() != null
+                || tilPrecio.getError() != null || tilFecha.getError() != null;
+    }
+
+    // Borra el aviso rojo del campo en cuanto el usuario escribe algo. Si era el último aviso,
+    // también se oculta el mensaje de abajo. Un "Sin conexión" no tiene avisos en los campos,
+    // así que sigue visible aunque se escriba.
     private void limpiarErrorAlEscribir(TextInputEditText campo, TextInputLayout til) {
         campo.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int i, int a, int d) { }
             @Override public void onTextChanged(CharSequence s, int i, int a, int d) { }
-            @Override public void afterTextChanged(Editable s) { til.setError(null); }
+            @Override public void afterTextChanged(Editable s) {
+                if (til.getError() == null) return;
+                til.setError(null);
+                if (!hayErrores()) {
+                    tvMensaje.setVisibility(View.GONE);
+                }
+            }
         });
     }
 

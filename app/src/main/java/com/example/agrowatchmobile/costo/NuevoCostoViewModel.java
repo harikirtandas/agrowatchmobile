@@ -36,6 +36,14 @@ public class NuevoCostoViewModel extends AndroidViewModel {
         return ultimoError;
     }
 
+    // La Activity ya mostró el error: se vuelve a LIBRE para que, al girar, no se marquen de
+    // nuevo los campos del 422 que el usuario ya corrigió.
+    public void errorMostrado() {
+        if (estado.getValue() == Estado.ERROR) {
+            estado.setValue(Estado.LIBRE);
+        }
+    }
+
     public void guardar(int siembraId, CostoPedido pedido) {
         if (estado.getValue() == Estado.GUARDANDO) {
             return; // ya hay uno en camino
