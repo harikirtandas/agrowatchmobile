@@ -72,6 +72,10 @@
     <string name="lote_costos_titulo">Costos cargados</string>
     <string name="lote_sin_costos">Todavía no hay costos cargados en este lote.</string>
     <string name="lote_costo_guardado">Costo guardado</string>
+    <string name="lote_borrar_pregunta">¿Borrar este costo?</string>
+    <string name="lote_borrar">Borrar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="lote_costo_borrado">Costo borrado</string>
     <string name="importe_usd">US$ %1$s</string>
     <string name="importe_ars">$ %1$s</string>
     <string name="porcentaje">%1$s%%</string>

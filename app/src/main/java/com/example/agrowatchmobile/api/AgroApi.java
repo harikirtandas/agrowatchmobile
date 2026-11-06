@@ -19,6 +19,7 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.DELETE;
 
 // Todos los endpoints de agrowatch-api que usa la app, en un solo lugar.
 // Las rutas son relativas a ApiCliente.URL_BASE: van SIN barra inicial, si no Retrofit
@@ -56,4 +57,8 @@ public interface AgroApi {
 
     @POST("siembras/{id}/costos")
     Call<Costo> crearCosto(@Path("id") int siembraId, @Body CostoPedido pedido);
+
+    // Responde 204 sin cuerpo: por eso Void.
+    @DELETE("costos/{id}")
+    Call<Void> borrarCosto(@Path("id") int costoId);
 }

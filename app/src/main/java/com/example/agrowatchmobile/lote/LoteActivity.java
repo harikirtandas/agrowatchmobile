@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
 
 import com.example.agrowatchmobile.R;
 import com.example.agrowatchmobile.api.AgroApi;
@@ -73,6 +74,15 @@ public class LoteActivity extends AppCompatActivity {
         lvCostos.addHeaderView(encabezado, null, false);
         adaptador = new CostosAdapter(this, costos);
         lvCostos.setAdapter(adaptador);
+        // Toque largo sobre un costo -> pregunta si se borra.
+        lvCostos.setOnItemLongClickListener((parent, view, position, id) -> {
+            Object item = parent.getItemAtPosition(position);
+            if (item instanceof Costo) {
+                confirmarBorrado((Costo) item);
+                return true;
+            }
+            return false;
+        });
 
         tvTituloLote = encabezado.findViewById(R.id.tvTituloLote);
         tvSubtituloLote = encabezado.findViewById(R.id.tvSubtituloLote);
@@ -209,5 +219,30 @@ public class LoteActivity extends AppCompatActivity {
             cargarMargen();
             cargarCostos();
         }
+    }
+
+    private void confirmarBorrado(Costo costo) {
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.lote_borrar_pregunta)
+                .setPositiveButton(R.string.lote_borrar, (dialogo, boton) -> borrarCosto(costo))
+                .setNegativeButton(R.string.cancelar, null)
+                .show();
+    }
+
+    private void borrarCosto(Costo costo) {
+        api.borrarCosto(costo.getId()).enqueue(new LlamadaApi<Void>(this) {
+            @Override
+            protected void alRecibir(Void cuerpo) {
+                Toast.makeText(LoteActivity.this, R.string.lote_costo_borrado, Toast.LENGTH_SHORT).show();
+                // Igual que después de un alta: el margen y la lista cambiaron.
+                cargarMargen();
+                cargarCostos();
+            }
+
+            @Override
+            protected void alFallar(ErrorApi error) {
+                Toast.makeText(LoteActivity.this, error.texto(LoteActivity.this), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

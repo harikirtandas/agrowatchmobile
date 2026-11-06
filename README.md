@@ -71,12 +71,12 @@ al despliegue de Railway por HTTPS; no hace falta cambiarla para probar la app.
 
 ## 3. Pantallas
 
-| Activity | Qué muestra | Desde dónde se llega y qué recibe |
-| --- | --- | --- |
-| `LoginActivity` | Logo, email y contraseña. Ingresa con `POST /auth/login` y guarda el token. Un enlace abre el registro en la web | Es la pantalla de inicio. Si ya hay una sesión guardada pasa directo al panel. Hace `finish()`, así Atrás no vuelve a ella |
+| Activity | Qué muestra                                                                                                                                                                                        | Desde dónde se llega y qué recibe |
+| --- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| --- |
+| `LoginActivity` | Logo, email y contraseña. Ingresa con `POST /auth/login` y guarda el token. Un enlace abre el registro en la web                                                                                   | Es la pantalla de inicio. Si ya hay una sesión guardada pasa directo al panel. Hace `finish()`, así Atrás no vuelve a ella |
 | `PanelActivity` | Selector de campo (solo si hay más de uno), el velocímetro con el semáforo del campo, tres indicadores (hectáreas sembradas, margen bruto, lotes en alerta) y la lista de lotes, del peor al mejor | Desde el ingreso. Sin extras: el campo elegido queda guardado en la sesión |
-| `LoteActivity` | El semáforo del lote, el rinde de indiferencia, los números de la proyección y los costos cargados. Botón **Cargar costo** | Desde un lote del panel. Recibe el extra `siembra_id` (el id que se pide a la API) y `lote_nombre` |
-| `NuevoCostoActivity` | Formulario del costo: categoría, descripción, cantidad, unidad, precio, moneda y fecha. Valida antes de enviar y hace el `POST` | Desde el lote, con la **Activity Result API**. Recibe `siembra_id` y `lote_nombre`; si la API guarda el costo devuelve `RESULT_OK` y el lote se vuelve a cargar |
+| `LoteActivity` | El semáforo del lote, el rinde de indiferencia, los números de la proyección y los costos cargados. Botón **Cargar costo**. Un toque largo sobre un costo permite borrarlo.                        | Desde un lote del panel. Recibe el extra `siembra_id` (el id que se pide a la API) y `lote_nombre` |
+| `NuevoCostoActivity` | Formulario del costo: categoría, descripción, cantidad, unidad, precio, moneda y fecha. Valida antes de enviar y hace el `POST`                                                                    | Desde el lote, con la **Activity Result API**. Recibe `siembra_id` y `lote_nombre`; si la API guarda el costo devuelve `RESULT_OK` y el lote se vuelve a cargar |
 
 <p>
   <img src="docs/capturas/01-ingreso.png" width="200" alt="Ingreso">
@@ -102,6 +102,7 @@ ingreso llevan `Authorization: Bearer <token>`.
 | GET | `/siembras/{id}/margen` | El semáforo y los números de cada lote |
 | GET | `/siembras/{id}/costos` | Los costos cargados en el lote |
 | POST | `/siembras/{id}/costos` | **Alta de un costo desde la app** |
+| DELETE | `/costos/{id}` | **Borrar un costo desde la app**: toque largo sobre el costo en el lote |
 
 Las tres operaciones que pide la consigna: **listar** (lotes y costos), **crear** (costo) y
 **detalle por id** (siembra). El costo cargado desde la app queda en la misma base y cambia
@@ -179,8 +180,8 @@ en Android 7.0.
 ## 7. Limitaciones conocidas
 
 - **FCM todavía no está integrado** (sección 5).
-- **No se pueden editar ni borrar costos desde la app**: se hace desde la web. La API ya tiene
-  `PUT` y `DELETE /costos/{id}`, así que agregarlo es posible.
+- **No se pueden editar costos desde la app**: se hace desde la web. La API ya tiene
+  `PUT /costos/{id}`, así que agregarlo es posible.
 - **Al volver al panel se vuelven a pedir todos los datos**, incluido el margen de cada lote:
   un pedido por lote con siembra. Con muchos lotes la carga tarda más.
 - **Sin modo oscuro:** la web tampoco lo tiene.
