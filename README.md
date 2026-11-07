@@ -66,8 +66,9 @@ al despliegue de Railway por HTTPS; no hace falta cambiarla para probar la app.
 **Tests:** la lógica del semáforo tiene tests de unidad, que se corren con
 `./gradlew testDebugUnitTest`.
 
-> **Pendiente (FCM):** cuando se sume el servicio cloud (sección 5) va a hacer falta el
-> archivo `google-services.json` en la carpeta `app/`. Acá se va a explicar cómo conseguirlo.
+**FCM:** el archivo `google-services.json` ya está en `app/`, así que no hay que hacer nada
+extra para que compile. Qué es y cómo generarlo de nuevo está en la
+[sección 5](#5-servicio-cloud).
 
 ## 3. Pantallas
 
@@ -110,15 +111,75 @@ el margen del lote, que es lo que muestra el frontend web.
 
 ## 5. Servicio cloud
 
-> **Pendiente.** Se eligió **Firebase Cloud Messaging (FCM)** para notificaciones push. Los
-> pasos están en [PLAN.md](PLAN.md#servicio-cloud-fcm-r4).
+El servicio cloud de la app es **Firebase Cloud Messaging (FCM)**, de Google: notificaciones
+push que llegan al teléfono aunque la app esté cerrada.
 
-Por qué FCM y no Firebase Authentication: la app ya tiene su ingreso, el de la API. Sumar
+**Por qué hace falta un servicio así.** Android cierra las apps que quedan en segundo plano
+para ahorrar batería, así que una app no puede quedarse esperando un aviso del servidor. En
+su lugar, el sistema mantiene **una sola conexión para todo el teléfono**, que administra
+Google Play Services y comparten todas las apps instaladas. FCM es la puerta de entrada a esa
+conexión.
+
+**Por qué FCM y no Firebase Authentication.** La app ya tiene su ingreso, el de la API. Sumar
 Authentication obligaría a ingresar dos veces y no protegería la API, que sigue verificando su
 propio token. FCM no se superpone con nada, es gratis y no pide tarjeta.
 
-Cuando esté terminado, acá van a ir qué datos salen de la app y hacia dónde (el token de la
-instalación, hacia Firebase) y cómo se mandan los avisos.
+### Cómo está integrado
+
+| Pieza | Dónde | Qué hace |
+|---|---|---|
+| `AvisosService` | [`avisos/AvisosService.java`](app/src/main/java/com/example/agrowatchmobile/avisos/AvisosService.java) | Recibe el mensaje. Lo despierta el sistema, no una Activity nuestra |
+| Canal `avisos` | el mismo archivo | Agrupa las notificaciones. Obligatorio desde Android 8: sin canal el sistema las descarta sin avisar |
+| Permiso `POST_NOTIFICATIONS` | `PanelActivity` | Se pide al entrar al panel y no en el ingreso, para no interrumpirlo. Hace falta desde Android 13 |
+| Suscripción al tema | `PanelActivity` | La app se anota en el tema `avisos` al entrar al panel |
+
+Con la app **abierta**, Android no muestra nada por su cuenta: la notificación la arma
+`onMessageReceived`. Con la app **en segundo plano** la muestra el sistema, y por eso el canal
+y el ícono por defecto también van declarados en el `AndroidManifest.xml`.
+
+El ícono de la barra es una silueta monocroma aparte ([`ic_aviso.xml`](app/src/main/res/drawable/ic_aviso.xml)):
+Android enmascara ese ícono a blanco, así que el logo de la app se vería como una mancha.
+
+### Qué datos salen de la app y hacia dónde
+
+| Dato | Hacia dónde | Para qué |
+|---|---|---|
+| **Token de la instalación** | Servidores de Firebase (Google) | Es la dirección de esa copia de la app en ese teléfono. La genera Google, no la app, y cambia al reinstalar o borrar los datos |
+| **Suscripción al tema `avisos`** | Servidores de Firebase (Google) | Deja anotado que ese teléfono quiere recibir los avisos |
+
+**No sale nada más.** Al servicio cloud no se le manda el usuario, el email, el token de la
+API, ni los campos, lotes o costos: todo eso viaja únicamente a la API propia. El token de FCM
+tampoco se guarda ni se envía a la API, porque los avisos se mandan por tema y no por
+dispositivo.
+
+**Por qué por tema y no por token.** Enviar por token obliga a guardar la dirección de cada
+teléfono en una base de datos y mantenerla al día. Con un tema, el teléfono se suscribe solo y
+el envío se hace una vez al tema; Google se encarga de repartirlo.
+
+### Cómo se mandan los avisos
+
+En la consola de Firebase: **Messaging → New campaign → Notification**, con el título y el
+texto; en **Target**, la pestaña **Topic** con el nombre `avisos`. Después **Review** y —lo
+que es fácil pasar por alto— **Publish**: sin ese último paso la campaña queda en estado
+*Draft* y no se envía.
+
+### El `google-services.json`
+
+Es el archivo que identifica a la app ante Firebase. Sin él, el plugin de Gradle corta la
+compilación, así que **está versionado en este repositorio**, en `app/`, para que el proyecto
+compile al clonarlo.
+
+Contiene el id del proyecto, el id de la app y una `api_key` de cliente. Esa clave viaja
+dentro de la APK —cualquiera que instale la app puede leerla— y **no sirve para enviar
+notificaciones**: enviar requiere una cuenta de servicio, que no está ni va a estar en el
+repositorio.
+
+Para generarlo de nuevo, o para apuntar la app a otro proyecto de Firebase:
+
+1. En [console.firebase.google.com](https://console.firebase.google.com), crear un proyecto.
+2. Registrar una app Android con el paquete `com.example.agrowatchmobile`. Tiene que ser
+   exacto: con otro nombre el archivo se genera igual, pero las notificaciones no llegan.
+3. Descargar el `google-services.json` y dejarlo en `app/`, al lado de `build.gradle.kts`.
 
 ## 6. Decisiones de diseño
 
@@ -179,7 +240,9 @@ en Android 7.0.
 
 ## 7. Limitaciones conocidas
 
-- **FCM todavía no está integrado** (sección 5).
+- **Los avisos se mandan a mano desde la consola de Firebase.** La app los recibe; falta que
+  los dispare la API al sincronizar cotizaciones, que en el
+  [PLAN.md](PLAN.md#servicio-cloud-fcm-r4) figura como opcional.
 - **No se pueden editar costos desde la app**: se hace desde la web. La API ya tiene
   `PUT /costos/{id}`, así que agregarlo es posible.
 - **Al volver al panel se vuelven a pedir todos los datos**, incluido el margen de cada lote:
