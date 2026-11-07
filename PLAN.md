@@ -17,6 +17,7 @@ Entrega: **martes 24/11/2026, 23:59**, por el campus.
 | Panel: semáforo del campo, resumen y lista de lotes | Crear o editar establecimientos y lotes |
 | Detalle de un lote: semáforo, números de la proyección y costos | Campañas y siembras |
 | **Cargar un costo** a la siembra de un lote | Sincronizar cotizaciones |
+| Borrar un costo con un toque largo | Editar un costo |
 | Recibir notificaciones push (FCM) | |
 
 ## Pantallas
@@ -25,7 +26,7 @@ Entrega: **martes 24/11/2026, 23:59**, por el campus.
 |---|---|---|
 | `LoginActivity` | Logo, email, contraseña. `POST /auth/login` | Pantalla de entrada. Si ya hay sesión pasa directo al panel. Hace `finish()`: no queda en la pila |
 | `PanelActivity` | Selector de campo, velocímetro del campo, 3 indicadores (ha sembradas, margen bruto, lotes en alerta) y la lista de lotes con su color | Desde el login |
-| `LoteActivity` | Velocímetro del lote, rinde de indiferencia, ingreso, costo, margen y la lista de costos | Extra `siembra_id`: abre un elemento por su id |
+| `LoteActivity` | Velocímetro del lote, rinde de indiferencia, ingreso, costo, margen y la lista de costos. Toque largo sobre un costo para borrarlo | Extra `siembra_id`: abre un elemento por su id |
 | `NuevoCostoActivity` | Formulario del costo, validado antes de enviar. `POST /siembras/{id}/costos` | Abierta con la **Activity Result API**; devuelve `RESULT_OK` y el lote se recarga |
 
 ## Endpoints que usa la app
@@ -44,9 +45,10 @@ No se agregan endpoints nuevos ni se modifica ninguno.
 | GET | `/siembras/{id}/margen` | Semáforo y números de cada lote |
 | GET | `/siembras/{id}/costos` | Costos cargados en el lote |
 | POST | `/siembras/{id}/costos` | **Alta de un costo** desde la app |
+| DELETE | `/costos/{id}` | Borrar un costo desde la app |
 
 R2 queda cubierto así: listar (GET de lotes y costos), crear (POST de costo) y detalle por id
-(`GET /siembras/{id}`).
+(`GET /siembras/{id}`). Además, borrar (`DELETE /costos/{id}`).
 
 ## Coherencia con el frontend web
 
@@ -76,6 +78,7 @@ R2 queda cubierto así: listar (GET de lotes y costos), crear (POST de costo) y 
 - `panel/`, `lote/`, `costo/`, `login/`: una Activity por pantalla con sus adaptadores.
 - `semaforo/`: `Semaforo` (estado, colores, ángulo, frase), `ResumenCampo` (el agregado del
   campo) y `GaugeView`.
+- `avisos/AvisosService`: recibe las notificaciones de FCM y crea el canal `avisos`.
 - Retrofit 2.11 + Gson, como en la Semana 14. Los pedidos van con `enqueue()`, fuera del hilo
   principal.
 - El alta del costo vive en un `ViewModel`: si se gira la pantalla mientras se guarda, el
@@ -86,7 +89,7 @@ R2 queda cubierto así: listar (GET de lotes y costos), crear (POST de costo) y 
 | # | Cómo se cumple |
 |---|---|
 | R1 | 4 Activities, Intents con extras (`siembra_id`, nombre del lote), `NuevoCostoActivity` con Activity Result API |
-| R2 | GET de lotes, siembras y costos; POST de costo; GET por id de la siembra |
+| R2 | GET de lotes, siembras y costos; POST de costo; GET por id de la siembra; DELETE de costo |
 | R3 | Validación del formulario antes del POST. `onFailure` → «Sin conexión con la API»; `onResponse` con error → el `mensaje` de la API (400/404/422) y, en un 422, los `errores` por campo. 401 → vuelve al login |
 | R4 | Notificaciones push con **FCM** |
 | R5 | Textos en `strings.xml`, `EdgeToEdge` con insets, lista de lotes de la API, «Cargando…», botón Guardar deshabilitado mientras espera |
@@ -131,7 +134,8 @@ Consultar a los docentes si `google-services.json` va en el repositorio.
 - [ ] La API y la web abren desde un celular con datos móviles.
 - [ ] Un costo cargado en la app aparece en el semáforo de la web.
 - [ ] Modo avión, datos inválidos, id inexistente y rotación: la app no se cierra.
-- [ ] La notificación de FCM llega.
-- [ ] No hay contraseñas ni claves en el código ni en el historial.
+- [x] La notificación de FCM llega (probado por Marcos con la app abierta y minimizada).
+- [ ] No hay contraseñas ni claves en el código ni en el historial. La `api_key` de
+  `google-services.json` es de cliente y no cuenta (README, sección 5).
 - [ ] README con las 7 secciones; usuario de prueba en el envío del campus.
 - [ ] Todos los integrantes tienen commits.

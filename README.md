@@ -1,11 +1,11 @@
 # AgroWatch Mobile
 
 **El semáforo de tu campo en el bolsillo.** App Android de AgroWatchOut: el productor ingresa
-con su cuenta, ve si sus lotes van a dejar plata y carga costos desde el lote. Usa la misma API
-y los mismos datos que el frontend web.
+con su cuenta, ve si sus lotes van a dejar plata, carga y borra costos desde el lote y recibe
+avisos push. Usa la misma API y los mismos datos que el frontend web.
 
 |                    |                                                                                                |
-| ------------------ | ---------------------------------------------------------------------------------------------- |
+| --- | --- |
 | **API**            | https://api-rest-agro.up.railway.app/api                                                       |
 | **Frontend web**   | https://agrowatchout.up.railway.app                                                            |
 | **Backend**        | [agrowatch-api](https://github.com/harikirtandas/agrowatch-api), desplegado en Railway (PaaS)  |
@@ -38,7 +38,9 @@ teléfono el productor hace lo que necesita en el campo:
 - ver el semáforo de cada establecimiento y cuáles lotes están en riesgo;
 - ver los números de un lote: margen, costos y rinde de indiferencia;
 - **cargar un costo** apenas lo tiene (el gasoil, el flete, el fertilizante) y ver cómo cambia
-  el semáforo.
+  el semáforo;
+- **borrar un costo** cargado por error, con un toque largo sobre él;
+- **recibir avisos** en el teléfono aunque la app esté cerrada (sección 5).
 
 Mantiene la identidad del frontend web: la misma paleta, el logo AW, el velocímetro del
 semáforo con sus colores y los mismos textos («Bien», «Ajustado», «Alerta»).
@@ -72,12 +74,12 @@ extra para que compile. Qué es y cómo generarlo de nuevo está en la
 
 ## 3. Pantallas
 
-| Activity | Qué muestra                                                                                                                                                                                        | Desde dónde se llega y qué recibe |
-| --- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| --- |
-| `LoginActivity` | Logo, email y contraseña. Ingresa con `POST /auth/login` y guarda el token. Un enlace abre el registro en la web                                                                                   | Es la pantalla de inicio. Si ya hay una sesión guardada pasa directo al panel. Hace `finish()`, así Atrás no vuelve a ella |
+| Activity | Qué muestra | Desde dónde se llega y qué recibe |
+| --- | --- | --- |
+| `LoginActivity` | Logo, email y contraseña. Ingresa con `POST /auth/login` y guarda el token. Un enlace abre el registro en la web | Es la pantalla de inicio. Si ya hay una sesión guardada pasa directo al panel. Hace `finish()`, así Atrás no vuelve a ella |
 | `PanelActivity` | Selector de campo (solo si hay más de uno), el velocímetro con el semáforo del campo, tres indicadores (hectáreas sembradas, margen bruto, lotes en alerta) y la lista de lotes, del peor al mejor | Desde el ingreso. Sin extras: el campo elegido queda guardado en la sesión |
-| `LoteActivity` | El semáforo del lote, el rinde de indiferencia, los números de la proyección y los costos cargados. Botón **Cargar costo**. Un toque largo sobre un costo permite borrarlo.                        | Desde un lote del panel. Recibe el extra `siembra_id` (el id que se pide a la API) y `lote_nombre` |
-| `NuevoCostoActivity` | Formulario del costo: categoría, descripción, cantidad, unidad, precio, moneda y fecha. Valida antes de enviar y hace el `POST`                                                                    | Desde el lote, con la **Activity Result API**. Recibe `siembra_id` y `lote_nombre`; si la API guarda el costo devuelve `RESULT_OK` y el lote se vuelve a cargar |
+| `LoteActivity` | El semáforo del lote, el rinde de indiferencia, los números de la proyección y los costos cargados. Botón **Cargar costo**. Un toque largo sobre un costo pide confirmación, con la descripción y el importe, y lo borra | Desde un lote del panel. Recibe el extra `siembra_id` (el id que se pide a la API) y `lote_nombre` |
+| `NuevoCostoActivity` | Formulario del costo: categoría, descripción, cantidad, unidad, precio, moneda y fecha. Valida antes de enviar y hace el `POST` | Desde el lote, con la **Activity Result API**. Recibe `siembra_id` y `lote_nombre`; si la API guarda el costo devuelve `RESULT_OK` y el lote se vuelve a cargar |
 
 <p>
   <img src="docs/capturas/01-ingreso.png" width="200" alt="Ingreso">
@@ -106,8 +108,9 @@ ingreso llevan `Authorization: Bearer <token>`.
 | DELETE | `/costos/{id}` | **Borrar un costo desde la app**: toque largo sobre el costo en el lote |
 
 Las tres operaciones que pide la consigna: **listar** (lotes y costos), **crear** (costo) y
-**detalle por id** (siembra). El costo cargado desde la app queda en la misma base y cambia
-el margen del lote, que es lo que muestra el frontend web.
+**detalle por id** (siembra). Además se puede **borrar** un costo. El costo cargado o borrado
+desde la app queda en la misma base y cambia el margen del lote, que es lo que muestra el
+frontend web.
 
 ## 5. Servicio cloud
 
@@ -167,12 +170,14 @@ que es fácil pasar por alto— **Publish**: sin ese último paso la campaña qu
 
 Es el archivo que identifica a la app ante Firebase. Sin él, el plugin de Gradle corta la
 compilación, así que **está versionado en este repositorio**, en `app/`, para que el proyecto
-compile al clonarlo.
+compile al clonarlo. El repositorio es público, así que cualquiera puede verlo.
 
 Contiene el id del proyecto, el id de la app y una `api_key` de cliente. Esa clave viaja
 dentro de la APK —cualquiera que instale la app puede leerla— y **no sirve para enviar
 notificaciones**: enviar requiere una cuenta de servicio, que no está ni va a estar en el
-repositorio.
+repositorio. Igual conviene restringir la clave en Google Cloud Console a la app Android y a
+las APIs de Firebase. Si los docentes prefieren que el archivo no esté en el repositorio, se
+saca y se genera con los pasos de abajo.
 
 Para generarlo de nuevo, o para apuntar la app a otro proyecto de Firebase:
 
@@ -204,10 +209,17 @@ de siempre ya tomadas, para no repetirlas en cada pantalla:
 - En Nuevo costo, el aviso de un campo se borra apenas se escribe en él. Cuando no queda
   ningún aviso, también se oculta el mensaje de abajo. «Sin conexión con la API» no marca
   campos, así que sigue visible hasta que se vuelve a tocar Guardar.
+- Al borrar un costo, si la API responde 404 (ya lo habían borrado, por ejemplo desde la web),
+  se avisa y se vuelve a pedir la lista para que deje de aparecer.
 - Un 401 cierra la sesión y vuelve al ingreso.
 - Si la Activity ya se cerró, por ejemplo porque se giró la pantalla, la respuesta se ignora.
 
 `ErrorApi` lee el formato de error de esta API: `{"error": {"status", "mensaje", "errores"}}`.
+
+<p>
+  <img src="docs/capturas/05-error-422.png" width="200" alt="Error 422 con los campos marcados">
+  <img src="docs/capturas/06-sin-conexion.png" width="200" alt="Sin conexión con la API">
+</p>
 
 **El semáforo del campo se calcula en la app.** La API calcula el margen de cada lote; el del
 campo entero lo arma el frontend web en `dashboard.js`. Para que la app muestre los mismos
@@ -233,7 +245,9 @@ campo del 422 que el usuario ya corrigió no se vuelve a marcar al girar.
 **Librerías:**
 - **Retrofit 2.11 con Gson**, la versión de la cursada;
 - **Lifecycle** (`ViewModel` y `LiveData`), para el alta;
-- **Material Components**, para el tema, las tarjetas y los campos de texto.
+- **Material Components**, para el tema, las tarjetas y los campos de texto;
+- **Firebase Cloud Messaging**, con la BoM de Firebase 35.1.0 y el plugin google-services
+  4.5.0, para los avisos push.
 
 Las fechas usan `SimpleDateFormat` y no `java.time`, que necesita Android 8.0 y la app arranca
 en Android 7.0.
@@ -243,6 +257,10 @@ en Android 7.0.
 - **Los avisos se mandan a mano desde la consola de Firebase.** La app los recibe; falta que
   los dispare la API al sincronizar cotizaciones, que en el
   [PLAN.md](PLAN.md#servicio-cloud-fcm-r4) figura como opcional.
+- **Tocar un aviso que llegó con la app abierta no hace nada:** no abre la app ni se borra de
+  la barra. Los que llegan con la app en segundo plano sí abren la app.
+- **Si el usuario rechaza las notificaciones, el permiso se vuelve a pedir** cada vez que se
+  abre el panel, hasta que Android lo bloquea solo después del segundo rechazo.
 - **No se pueden editar costos desde la app**: se hace desde la web. La API ya tiene
   `PUT /costos/{id}`, así que agregarlo es posible.
 - **Al volver al panel se vuelven a pedir todos los datos**, incluido el margen de cada lote:
