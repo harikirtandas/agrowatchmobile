@@ -123,4 +123,7 @@
         <item>flete</item>
         <item>otro</item>
     </string-array>
+    <!-- Avisos (FCM) -->
+    <string name="avisos_canal_nombre">Avisos de AgroWatch</string>
+    <string name="avisos_canal_descripcion">Novedades de tus campos y cotizaciones.</string>
 </resources>
