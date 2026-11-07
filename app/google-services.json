@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "396366533876",
+    "project_id": "agrowatchmobile",
+    "storage_bucket": "agrowatchmobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396366533876:android:a6881b61f8eea7ed7a7aa1",
+        "android_client_info": {
+          "package_name": "com.example.agrowatchmobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJtmSZ1k6HRg0L7F07X9i9D83MMPnqtUo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

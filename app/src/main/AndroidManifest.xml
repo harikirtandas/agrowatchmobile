@@ -5,6 +5,10 @@
     <!-- Sin este permiso la app se cierra apenas intenta llamar a la API. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Desde Android 13 el usuario tiene que aceptar las notificaciones. Se pide al
+     entrar al panel; en versiones anteriores se concede sola al instalar. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -42,6 +46,24 @@
             android:exported="false"
             android:parentActivityName=".lote.LoteActivity"
             android:windowSoftInputMode="adjustResize" />
+        <!-- El intent-filter es lo que le dice al sistema que esta clase es la que recibe
+     los mensajes de FCM. Sin el, el servicio nunca se ejecuta. -->
+        <service
+            android:name=".avisos.AvisosService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- Cuando la app esta en segundo plano la notificacion la arma el sistema, no
+             nuestro servicio: estos dos valores le dicen que canal e icono usar. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="avisos" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_aviso" />
     </application>
 
 </manifest>
