@@ -1,7 +1,11 @@
 package com.example.agrowatchmobile.panel;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +17,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -20,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import com.example.agrowatchmobile.R;
 import com.example.agrowatchmobile.api.ApiCliente;
 import com.example.agrowatchmobile.api.ErrorApi;
+import com.example.agrowatchmobile.avisos.AvisosService;
 import com.example.agrowatchmobile.lote.LoteActivity;
 import com.example.agrowatchmobile.modelo.Campania;
 import com.example.agrowatchmobile.modelo.Establecimiento;
@@ -29,6 +36,7 @@ import com.example.agrowatchmobile.sesion.Sesion;
 import com.example.agrowatchmobile.util.Aviso;
 import com.example.agrowatchmobile.util.Formato;
 import com.example.agrowatchmobile.util.Pantalla;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +48,30 @@ import retrofit2.Response;
 // El panel: el semáforo del campo elegido, los tres indicadores y la lista de lotes.
 // Tocar un lote con siembra abre LoteActivity con el id de la siembra.
 public class PanelActivity extends AppCompatActivity implements CargaPanel.Oyente {
+    // El tema al que se suscribe la app. Mandar por tema en vez de por token evita tener
+    // que guardar la direccion de cada celular en algun lado: el servidor manda una sola
+    // vez al tema y Google reparte.
+    private static final String TEMA_AVISOS = "avisos";
+    private static final String TAG_AVISOS = "Avisos";
 
     private final List<FilaLote> filas = new ArrayList<>();
     private LotesAdapter adaptador;
     private CargaPanel carga;
     private List<Establecimiento> campos = new ArrayList<>();
     private int campoActualId = -1;
+    // El cartel de permiso se registra aca, en el cuerpo de la clase, y no dentro de
+    // onCreate: la Activity Result API exige que el registro pase antes de que la pantalla
+    // arranque, y si no revienta con "LifecycleOwner is attempting to register while
+    // current state is RESUMED".
 
+    private final ActivityResultLauncher<String> pedirPermisoAvisos =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), concedido -> {
+                if (!concedido) {
+                    // Que diga que no es una respuesta valida: la app sigue andando igual,
+                    // solo no va a mostrar avisos.
+                    Log.i(TAG_AVISOS, "El usuario rechazo las notificaciones");
+                }
+            });
     private Aviso aviso;
     private View grupoCampo;
     private Spinner spCampo;
@@ -91,10 +116,32 @@ public class PanelActivity extends AppCompatActivity implements CargaPanel.Oyent
             tvTituloBarra.setText(nombre);
         }
 
+        prepararAvisos();
         // Los datos se piden en cada onCreate, también al girar la pantalla: la API es la que
         // sabe el estado del campo (el mismo criterio que AppAlumnos en la Semana 14).
         carga = new CargaPanel(this, this);
         cargar();
+    }
+    // Deja la app lista para recibir avisos. Se hace al entrar al panel y no en el login,
+    // porque recien aca el usuario ya esta adentro y el cartel de permiso no le interrumpe
+    // el ingreso.
+    private void prepararAvisos() {
+        AvisosService.crearCanal(this);
+
+        // Antes de Android 13 el permiso se concede solo al instalar; de ahi en mas hay que
+        // pedirlo. Si ya lo dio (o ya lo nego), no se vuelve a preguntar.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            pedirPermisoAvisos.launch(Manifest.permission.POST_NOTIFICATIONS);
+        }
+
+        // Suscribirse de nuevo cada vez no duplica nada: Google lo toma como una sola
+        // suscripcion. Se repite en cada entrada para cubrir al usuario que reinstalo.
+        FirebaseMessaging.getInstance().subscribeToTopic(TEMA_AVISOS)
+                .addOnCompleteListener(tarea -> Log.i(TAG_AVISOS, tarea.isSuccessful()
+                        ? "Suscripto al tema " + TEMA_AVISOS
+                        : "No se pudo suscribir al tema " + TEMA_AVISOS));
     }
 
     // Al volver de un lote (por ejemplo, después de cargar un costo) el semáforo puede haber
