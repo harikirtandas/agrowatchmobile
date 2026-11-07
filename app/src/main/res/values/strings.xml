@@ -73,6 +73,8 @@
     <string name="lote_sin_costos">Todavía no hay costos cargados en este lote.</string>
     <string name="lote_costo_guardado">Costo guardado</string>
     <string name="lote_borrar_pregunta">¿Borrar este costo?</string>
+    <string name="lote_borrar_detalle">%1$s\n%2$s</string>
+    <string name="lote_pista_borrar">Mantené apretado un costo para borrarlo.</string>
     <string name="lote_borrar">Borrar</string>
     <string name="cancelar">Cancelar</string>
     <string name="lote_costo_borrado">Costo borrado</string>

@@ -44,11 +44,16 @@ public class CostosAdapter extends ArrayAdapter<Costo> {
                 costo.getUnidad(),
                 Formato.fecha(costo.getFecha())));
 
-        String importe = Formato.numero(costo.getImporte(), 2);
-        ((TextView) vista.findViewById(R.id.tvImporte)).setText("USD".equals(costo.getMoneda())
-                ? c.getString(R.string.importe_usd, importe)
-                : c.getString(R.string.importe_ars, importe));
+        ((TextView) vista.findViewById(R.id.tvImporte)).setText(importe(c, costo));
         return vista;
+    }
+
+    // "US$ 1.234,50" o "$ 1.234,50" según la moneda. También lo usa el diálogo de borrado.
+    static String importe(Context c, Costo costo) {
+        String importe = Formato.numero(costo.getImporte(), 2);
+        return "USD".equals(costo.getMoneda())
+                ? c.getString(R.string.importe_usd, importe)
+                : c.getString(R.string.importe_ars, importe);
     }
 
     // "fertilizante" (valor de la API) -> "Fertilizante" (texto de strings.xml).

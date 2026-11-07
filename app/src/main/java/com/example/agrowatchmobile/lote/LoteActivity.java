@@ -48,7 +48,7 @@ public class LoteActivity extends AppCompatActivity {
     private CostosAdapter adaptador;
     private Aviso aviso;
 
-    private TextView tvTituloLote, tvSubtituloLote, tvPctLote, tvEstadoLote, tvRinde, tvFaltaDato, tvSinCostos;
+    private TextView tvTituloLote, tvSubtituloLote, tvPctLote, tvEstadoLote, tvRinde, tvFaltaDato, tvSinCostos, tvPistaBorrar;
     private TextView tvIngreso, tvCostoTotal, tvCostoHa, tvMargenLote;
     private View tarjetaNumeros;
     private GaugeView gaugeLote;
@@ -97,6 +97,7 @@ public class LoteActivity extends AppCompatActivity {
         tvCostoHa = encabezado.findViewById(R.id.tvCostoHa);
         tvMargenLote = encabezado.findViewById(R.id.tvMargenLote);
         tvSinCostos = encabezado.findViewById(R.id.tvSinCostos);
+        tvPistaBorrar = encabezado.findViewById(R.id.tvPistaBorrar);
         encabezado.findViewById(R.id.btnCargarCosto).setOnClickListener(v -> abrirNuevoCosto());
 
         if (loteNombre != null) {
@@ -196,12 +197,14 @@ public class LoteActivity extends AppCompatActivity {
                 adaptador.notifyDataSetChanged();
                 tvSinCostos.setText(R.string.lote_sin_costos);
                 tvSinCostos.setVisibility(nuevos.isEmpty() ? View.VISIBLE : View.GONE);
+                tvPistaBorrar.setVisibility(nuevos.isEmpty() ? View.GONE : View.VISIBLE);
             }
 
             @Override
             protected void alFallar(ErrorApi error) {
                 tvSinCostos.setText(error.texto(LoteActivity.this));
                 tvSinCostos.setVisibility(View.VISIBLE);
+                tvPistaBorrar.setVisibility(View.GONE);
             }
         });
     }
@@ -222,8 +225,11 @@ public class LoteActivity extends AppCompatActivity {
     }
 
     private void confirmarBorrado(Costo costo) {
+        // Se muestra cuál costo es, para no borrar otro por error.
         new AlertDialog.Builder(this)
-                .setMessage(R.string.lote_borrar_pregunta)
+                .setTitle(R.string.lote_borrar_pregunta)
+                .setMessage(getString(R.string.lote_borrar_detalle,
+                        costo.getDescripcion(), CostosAdapter.importe(this, costo)))
                 .setPositiveButton(R.string.lote_borrar, (dialogo, boton) -> borrarCosto(costo))
                 .setNegativeButton(R.string.cancelar, null)
                 .show();
@@ -242,6 +248,12 @@ public class LoteActivity extends AppCompatActivity {
             @Override
             protected void alFallar(ErrorApi error) {
                 Toast.makeText(LoteActivity.this, error.texto(LoteActivity.this), Toast.LENGTH_LONG).show();
+                // 404: ya lo habían borrado (por ejemplo, desde la web). Se recarga para que
+                // deje de aparecer en la lista.
+                if (error.getStatus() == 404) {
+                    cargarMargen();
+                    cargarCostos();
+                }
             }
         });
     }

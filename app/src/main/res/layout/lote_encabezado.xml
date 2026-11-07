@@ -220,6 +220,17 @@
         android:text="@string/lote_costos_titulo"
         android:textSize="18sp" />
 
+    <!-- Pista del toque largo para borrar: sólo se ve si hay costos. -->
+    <TextView
+        android:id="@+id/tvPistaBorrar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="@string/lote_pista_borrar"
+        android:textColor="@color/gris_texto"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
     <TextView
         android:id="@+id/tvSinCostos"
         android:layout_width="wrap_content"
