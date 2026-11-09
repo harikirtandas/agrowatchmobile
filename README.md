@@ -8,6 +8,7 @@ avisos push. Usa la misma API y los mismos datos que el frontend web.
 | --- | --- |
 | **API**            | https://api-rest-agro.up.railway.app/api                                                       |
 | **Frontend web**   | https://agrowatchout.up.railway.app                                                            |
+| **Video**          | [Recorrido de la app (3 a 5min)](https://youtu.be/cxIcqkEsktM)                                 |
 | **Backend**        | [agrowatch-api](https://github.com/harikirtandas/agrowatch-api), desplegado en Railway (PaaS)  |
 | **Materia**        | Aplicaciones Móviles y Cloud Computing (UPSO), Trabajo Práctico Integrador N.º 2               |
 | **Docentes**       | Eduardo Mónaco y Heber Alonso                                                                  |
@@ -87,6 +88,17 @@ extra para que compile. Qué es y cómo generarlo de nuevo está en la
   <img src="docs/capturas/03-lote.png" width="200" alt="Detalle de un lote">
   <img src="docs/capturas/04-nuevo-costo.png" width="200" alt="Nuevo costo">
 </p>
+**El mismo costo en el front web y un aviso de FCM:**
+<p>
+  <img src="docs/capturas/08-costo-en-la-web.png" width="400" alt="El costo cargado en la app, visto en el frontend web">
+  <img src="docs/capturas/07-notificacion.png" width="200" alt="Notificación de FCM en el teléfono">
+</p>
+
+### Video
+
+Recorrido de la app de 3 a 5 minutos, sin voz y con textos en pantalla: cada pantalla, el alta de un costo y el mismo dato en la web, el borrado del costo, un error de validación y uno de la API,
+el giro de pantalla y Atrás, la app sin conexión y una notificación de FCM.
+**[Ver el video](https://youtu.be/cxIcqkEsktM)**
 
 ## 4. Endpoints que usa la app
 
